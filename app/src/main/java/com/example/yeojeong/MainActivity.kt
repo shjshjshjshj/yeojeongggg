@@ -1,23 +1,35 @@
 package com.example.yeojeong
 
+import android.Manifest
 import android.os.Bundle
-import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.yeojeong.databinding.ActivityMainBinding
+import com.example.yeojeong.ui.dashboard.DashboardFragment
+import com.example.yeojeong.ui.home.HomeFragment
+import com.example.yeojeong.ui.notifications.NotificationsFragment
+import com.example.yeojeong.ui.result.ResultFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
-
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    var backTime: Long = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,50 +37,51 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setNavigation()
+        supportActionBar?.hide();
+
+        /*
         val navView: BottomNavigationView = binding.navView
+
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_result
             )
         )
-
-        val mapView = MapView(this)
-        binding.KakaoView.addView(mapView)
-
-        // 줌 인
-        mapView.zoomIn(true)
-
-        // 줌 아웃
-        mapView.zoomOut(true)
-
-        // 서울역의 위도 경도
-        val mapPoint = MapPoint.mapPointWithGeoCoord(37.554668024641515,
-            126.97059786786713)
-
-        // 지도의 중심을 서울역으로 변경 후 줌 레벨도 변경 해줌.
-        mapView.setMapCenterPoint(mapPoint, true)
-        mapView.setZoomLevel(2, true)
-
-
-        // 마커 생성
-        val marker = MapPOIItem()
-        marker.itemName = "이곳은 서울역 입니다."
-        marker.mapPoint = mapPoint
-        marker.markerType = MapPOIItem.MarkerType.BluePin
-        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-
-        // 설정한 메소드를 marker에 적용함.
-        mapView.addPOIItem(marker)
-
-
-
-
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        navView.setupWithNavController(navController) ///end */
+
+    }
+
+    private fun setNavigation() {
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        val navigator = KeepNav(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment)
+
+        navController.navigatorProvider.addNavigator(navigator)
+
+        navController.setGraph(R.navigation.mobile_navigation)
+
+        binding.navView.setupWithNavController(navController)
+    }
+
+
+    override fun onBackPressed() {
+        // 뒤로가기 버튼 클릭
+        if(System.currentTimeMillis() - backTime >=2000 ) {
+            backTime = System.currentTimeMillis()
+            Toast.makeText(this,"'뒤로'버튼은 한 번 더 누르면 종료됩니다", Toast.LENGTH_LONG).show()
+        } else {
+            ActivityCompat.finishAffinity(this);
+            System.exit(0)
+        }
     }
 
 }
+

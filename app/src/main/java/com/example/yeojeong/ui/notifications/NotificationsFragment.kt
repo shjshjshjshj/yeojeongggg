@@ -6,8 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.example.yeojeong.databinding.FragmentNotificationsBinding
+import com.example.yeojeong.ui.notifications.tab.BookmakrFragment
+import com.example.yeojeong.ui.notifications.tab.ReviewFragment
+import com.example.yeojeong.ui.notifications.tab.reportFragment
+import com.google.android.material.tabs.TabLayout
 
 class NotificationsFragment : Fragment() {
 
@@ -16,6 +24,7 @@ class NotificationsFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,10 +37,6 @@ class NotificationsFragment : Fragment() {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
         return root
     }
 
@@ -39,4 +44,5 @@ class NotificationsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
